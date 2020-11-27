@@ -5,7 +5,7 @@ import furhatos.nlu.common.Number
 import furhatos.util.Language
 
 class CakeSelection(
-        var layers: Int,
+        var layers: Int = 1,
         var flavour: String,
         var frosting: Boolean ) : ComplexEnumEntity() {
     override fun getEnum(lang: Language): List<String> {

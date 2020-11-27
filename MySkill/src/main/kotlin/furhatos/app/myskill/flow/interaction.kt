@@ -44,13 +44,13 @@ val ChooseFrosting= state(Interaction) {
      onResponse<Yes>{
          users.current.CakeChoices.cake.frosting = true
          furhat.say("Ok great.") //R is recipe and F means Frosting
-         goto(ChooseLayers)
+         goto(ConfirmCake)
     }
 
     onResponse<No>{
         users.current.CakeChoices.cake.frosting = false
         furhat.say("Alright plain ${users.current.CakeChoices.cake.flavour} cake it is!")
-        goto(ChooseLayers)
+        goto(ConfirmCake)
     }
 
 }
@@ -69,10 +69,10 @@ val ChooseLayers= state(Interaction) {
 
 val ConfirmCake = state(Interaction) {
     onEntry{
-        furhat.say { "You have selected a ${users.current.CakeChoices.cake.flavour}  cake "}
-        //furhat.say { "with ${users.current.CakeChoices.cake.layers} layers" }
-        //furhat.say { (if(users.current.CakeChoices.cake.frosting) "and frosting" else "") }
-        //goto(Idle)
+        furhat.say ("You have selected a ${users.current.CakeChoices.cake.flavour}  cake ")
+        furhat.say ( "with ${users.current.CakeChoices.cake.layers} layers" )
+        furhat.say ((if(users.current.CakeChoices.cake.frosting) "and frosting" else "") )
+        goto(Idle)
     }
 }
 
