@@ -10,5 +10,6 @@ class CakeData (
 )
 
 
+
 val User.CakeChoices : CakeData
    get() = data.getOrPut(CakeData::class.qualifiedName, CakeData(CakeSelection(1, "Vanilla", false)))

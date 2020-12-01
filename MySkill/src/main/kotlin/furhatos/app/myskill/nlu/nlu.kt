@@ -35,4 +35,24 @@ class SelectLayers(var layers: Int = 0): Intent() {
         return listOf("@layers", "I want @layers layers", "I would like @layers layers")
     }
 }
+class Ready : EnumEntity() {
+    override fun getEnum(lang: Language): List<String> {
+        return listOf("Ready", "Ok, I'm ready", "Ok", "Next")
+    }
+}
+class Ingredients : EnumEntity() {
+    override fun getEnum(lang: Language): List<String> {
+        return listOf("Ingredients")
+    }
+}
+class Instructions : EnumEntity() {
+    override fun getEnum(lang: Language): List<String> {
+        return listOf("Instructions")
+    }
+}
+class Repeat : EnumEntity() {
+    override fun getEnum(lang: Language): List<String> {
+        return listOf("Again", "Repeat")
+    }
+}
 class Layers(val count : furhatos.nlu.common.Number? = Number(1) )
