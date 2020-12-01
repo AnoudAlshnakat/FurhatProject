@@ -78,6 +78,7 @@ val ChooseLayers= state(Interaction) {
 
 val ConfirmCake = state(Interaction) {
     onEntry{
+
         furhat.say ("You have selected a ${users.current.CakeChoices.cake.flavour}  cake ")
         furhat.say ( "with ${users.current.CakeChoices.cake.layers} layer" )
         furhat.say ((if(users.current.CakeChoices.cake.frosting) "and frosting" else "") )
@@ -167,3 +168,80 @@ val GiveInstructions = state(Interaction) {
         instruction_step = instruction_step-1
         reentry() }
 }
+/* 
+        furhat.say ("You have selected a ${users.current.CakeChoices.cake.flavour} cake ")
+        furhat.say ( "with ${users.current.CakeChoices.cake.layers} layers" )
+        furhat.say ((if(users.current.CakeChoices.cake.frosting) "and frosting" else "") )
+        goto(ReadyforIng)
+    }
+}
+
+
+val ReadyforIng = state(Interaction) {
+    onEntry{
+    random(
+                { furhat.ask("Are you ready to grab the ingredients for the Cake recipe?") },
+                { furhat.ask("Shall we start with the ingredients?") }
+        )
+    }
+
+    onResponse<No>{
+         furhat.say("No problem I can wait a bit.") //R is recipe and F means Frosting
+         //TODO: add a timer for the count down waiting for the user to get ready
+          
+         delay(1000)
+         furhat.say("Whenever you are ready, please say next")
+      //   onResponse<Continue>
+      //   {  
+         reentry() //TODO Change either add a flag and change what furhat says in the second entry or add an other state
+      //   }
+    }
+
+    onResponse<Yes>{
+         furhat.say("Great, let's start having some fun.") //R is recipe and F means Frosting
+         if (users.current.CakeChoices.cake.flavour.equals ("Chocolate", true))
+         {goto(ListCakeChocolate)}
+         else
+         {goto(Idle)}
+    }
+}
+
+
+val ListCakeChocolate = state(Interaction) {
+    onEntry{  
+        furhat.say("For the basic ${users.current.CakeChoices.cake.flavour} cake, you will need these ingredients: ") 
+        furhat.say("225 grams plain flour " ) 
+        delay(1000)
+        furhat.say("350 grams sugar "  ) 
+        delay(1000)
+        furhat.say("85 grams cocoa powder ") 
+        delay(1000)
+        furhat.say("1 and a half tea spoon baking powder ")  
+        delay(1000)
+        furhat.say("1 and a half tea spoon bicarbonate of soda ") 
+        delay(1000)
+        furhat.say("2 free range eggs " ) 
+        delay(1000)
+        furhat.say("250 milli liter milk ")  
+        delay(1000)
+        furhat.say( "125 milli liter vegetable oil " ) 
+        delay(1000)
+        furhat.say( "2  tea spoon vanilla extract "  ) 
+        delay(1000)
+        furhat.say("250 milli liter boiling water " )   
+        delay(1000)
+
+
+        furhat.ask("If you allergic to any of those ingredients, please mention it now?")            
+        }
+        
+        onResponse<No> { reentry()} //go to next
+        onResponse<SelectAllergy> {
+            furhat.say("Oh, I might have a substitution for the ${allergy}!")
+            reentry()
+
+        }
+    }
+
+*/
+

@@ -35,6 +35,7 @@ class SelectLayers(var layers: Int = 0): Intent() {
         return listOf("@layers", "I want @layers layers", "I would like @layers layers")
     }
 }
+
 class Ready : EnumEntity() {
     override fun getEnum(lang: Language): List<String> {
         return listOf("Ready", "Ok, I'm ready", "Ok", "Next")
@@ -56,3 +57,28 @@ class Repeat : EnumEntity() {
     }
 }
 class Layers(val count : furhatos.nlu.common.Number? = Number(1) )
+
+/*class Layers(val count : furhatos.nlu.common.Number? = Number(1) )
+
+
+class Continue : Intent() {
+    override fun getExamples(lang: Language): List<String> {
+        return listOf("Continue",
+                "Go on",
+                "Let's continue",
+                "Yes",
+                "Ready",
+                "Start",
+                " Next",
+                " Next example",
+                " Next please")
+    }
+}
+
+
+class SelectAllergy(var layers: Int = 0): Intent() {
+    override fun getExamples(lang: Language): List<String> {
+        return listOf("I am allergic to @allergy ", "I have a @allergy allergy", "@allergy")
+    }
+}*/
+
