@@ -65,6 +65,19 @@ class Repeat : EnumEntity() {
         return listOf("Again", "Repeat")
     }
 }
+
+class Done : EnumEntity() {
+    override fun getEnum(lang: Language): List<String> {
+        return listOf("Done", "Finished", "completed", "finished", "achieved", "accomplished", "carried out")
+    }
+}
+
+class Heard : EnumEntity() {
+    override fun getEnum(lang: Language): List<String> {
+        return listOf("heard")
+    }
+}
+
 class Layers(val count : furhatos.nlu.common.Number? = Number(1) )
 
 /*class Layers(val count : furhatos.nlu.common.Number? = Number(1) )
