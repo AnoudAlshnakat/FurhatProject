@@ -30,11 +30,20 @@ class SelectFlavour(var flavour : Flavour? = null) : Intent() {
     }
 }
 
-class SelectLayers(var layers: Int = 0): Intent() {
-    override fun getExamples(lang: Language): List<String> {
-        return listOf("@layers", "I want @layers layers", "I would like @layers layers")
+class SelectLayers(
+        val count : Number? = Number(1)) : ComplexEnumEntity() {
+
+    override fun getEnum(lang: Language): List<String> {
+        return listOf("@count")
+    }
+
+    override fun toText(): String {
+        return generate("$count")
     }
 }
+
+
+
 
 class Ready : EnumEntity() {
     override fun getEnum(lang: Language): List<String> {

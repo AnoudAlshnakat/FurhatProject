@@ -8,6 +8,7 @@ import furhatos.gestures.Gestures
 
 val Cheerup = state(Interaction) {
     onEntry {
+        furhat.say("")
         furhat.say {
             random {
                 + "Don't give up, it is just a cake."
@@ -65,7 +66,7 @@ val ChooseFlavour = state(Interaction) {
     onResponse<SelectFlavour> {
         furhat.say("Great, I love ${it.intent.flavour}!")
         users.current.CakeChoices.cake.flavour = "${it.intent.flavour}"
-        goto(ChooseFrosting)
+        goto(ChooseLayers)
     }
     onResponse {
         furhat.say("I did not catch that.")
@@ -73,6 +74,17 @@ val ChooseFlavour = state(Interaction) {
     }
 
 
+}
+val ChooseLayers= state(Interaction) {
+    onEntry {
+        furhat.ask("How many layers do you want for your cake?")
+    }
+    onResponse<SelectLayers>{
+        users.current.CakeChoices.cake.layers = it.intent.toString().toInt()
+        print(users.current.CakeChoices.cake.layers)
+        furhat.say("Ok you want ${it.intent} layers") //R is recipe and F means Frosting
+        goto(ChooseFrosting)
+    }
 }
 
 val ChooseFrosting= state(Interaction) {
@@ -92,18 +104,6 @@ val ChooseFrosting= state(Interaction) {
     }
 
 }
-val ChooseLayers= state(Interaction) {
-    onEntry {
-        furhat.ask("How many layers do you want for your cake?")
-    }
-    onResponse<SelectLayers>{
-        users.current.CakeChoices.cake.layers = it.intent.layers.toString().toInt()
-        furhat.say("Ok you want ${it.intent.layers} layers") //R is recipe and F means Frosting
-        goto(ConfirmCake)
-    }
-
-
-}
 
 val ConfirmCake = state(Interaction) {
     var ready = true; //assume always ready to hear the ingredients
@@ -113,12 +113,19 @@ val ConfirmCake = state(Interaction) {
             furhat.say("with ${users.current.CakeChoices.cake.layers} layer")
             furhat.say((if (users.current.CakeChoices.cake.frosting) "and frosting" else ""))
             furhat.say("Let me know when you are ready for the cake ingredients.")
-            furhat.listen(timeout = 30000)
+            furhat.listen(timeout = 5000)
         }
         else{
             furhat.say("take a few minutes, I am waiting here.")
             furhat.listen(timeout = 60000)
         }
+    }
+    onReentry {furhat.say{"Let me know when you are ready."}
+        furhat.listen(timeout=30000)
+    }
+    onNoResponse {
+        call(Cheerup)
+        reentry()
     }
     onResponse<Ready> {
        // goto(Ingredients)
@@ -145,7 +152,7 @@ val Ingredients = state(Interaction) {
             else {
                 furhat.say("flour, sugar, vanilla extract, baking powder, salt, vegetable oil")
             }
-            delay(1000)
+            delay(2000)
             furhat.ask("Do you want to hear the ingredients again or do you want to start with the instructions?")
         }
         onResponse<Ingredients>{
@@ -159,14 +166,13 @@ val Ingredients = state(Interaction) {
 
 val GiveInstructions = state(Interaction) {
     var instruction_step = 0
-
     val instruction = arrayOf("Preheat oven to 350 degrees",
             "In a large bowl, mix  flour, sugar, " +
-                    "cocoa and, baking powder.",
-                    "Add the vegetable oil, and "+
+                    "vanilla extract and, baking powder.",
+            "Add the vegetable oil, and "+
                     "Mix until smooth ",
-                    "Pour the butter into the prepared pan.",
-                    "Bake in the oven for 40 minutes")
+            "Pour the batter into the prepared pan.",
+            "Bake in the oven for 40 minutes")
 
     onEntry{
         if (users.current.CakeChoices.cake.flavour=="chocolate"){
@@ -177,42 +183,31 @@ val GiveInstructions = state(Interaction) {
                             "Mix until smooth ",
                     "Pour the batter into the prepared pan.",
                     "Bake in the oven for 40 minutes")}
-        else{
-            val instruction = arrayOf("Preheat oven to 350 degrees",
-                    "In a large bowl, mix  flour, sugar, " +
-                            "vanilla extract and, baking powder.",
-                    "Add the vegetable oil, and "+
-                            "Mix until smooth ",
-                    "Pour the batter into the prepared pan.",
-                    "Bake in the oven for 40 minutes")}
-
-
-
-
 
         furhat.say(instruction.get(0))
         instruction_step=instruction_step+1
         delay(1000)
-        random(
-        furhat.ask("Let me know when you are ready for the next step", timeout = 100000),
-        furhat.ask("Let me know when you are ready for the following step", timeout = 100000)
-                )
+
+        furhat.ask(random("Let me know when you are ready for the next step.",
+                "Let me know when you are ready for the following step."),
+                timeout = 100000)
     }
     onReentry {
         if (instruction.size - 1 == instruction_step) {
-            furhat.say("Ok. Here is the last step")
-            delay(1000)
+            furhat.say("Ok. Here is the last step.")
+            delay(2000)
         }
         furhat.say(instruction.get(instruction_step))
-        delay(1000)
+        delay(2000)
         instruction_step = instruction_step + 1
         if (instruction.size - 1 < instruction_step) {
             furhat.say("That was the last instruction of the cake, I am very excited for the results!")
             goto(ReadyForFrosting) //change enjoy the cake, and go to idle, to an other step to check it ith frosting
         } else {
             random(
-                    furhat.ask("Let me know when you are ready for the next step", timeout = 100000),
-                    furhat.ask("Are ready for the following step?", timeout = 100000)
+                    furhat.ask(random("Let me know when you are ready for the next step.",
+                                "Are you ready for the following step?",
+                                "Tell me when you are done with that."), timeout = 100000)
             )
         }
     }
@@ -227,11 +222,10 @@ val ReadyForFrosting = state(Interaction) {
     onEntry{
         if (users.current.CakeChoices.cake.frosting){
             call(Cheerup)
-           // reentry()
         furhat.ask ("Are you ready to fetch the frosting ingredients?")
         furhat.listen(timeout = 30000)}
         else
-        {goto(finally)}
+        {goto(Done)}
     }
     onResponse<Ready> {
         goto(FrostingIngredients)
@@ -267,7 +261,7 @@ val FrostingIngredients = state(Interaction){
 }
 
 val FrostingInstruction = state(Interaction) {
-    var counter = 0;
+    var counter = 0
     val Finstruction = arrayOf("mix powdered sugar and butter with spoon or electric mixer on low speed.",
             "Stir in vanilla and 1 tablespoon of the milk.",
             "Gradually beat in just 1 table spoon of milk .")
@@ -282,11 +276,8 @@ val FrostingInstruction = state(Interaction) {
                 furhat.ask("When you are ready for the next step, please tell me", timeout = 100000)
             else {
                 furhat.say("Now the frosting is done, put it on the side, and wait for your cake to be ready.")
-                goto(finally)
+                goto(Layering)
             }
-        }
-        else {
-
         }
     }
     onResponse<Ready> { reentry() }
@@ -297,11 +288,20 @@ val FrostingInstruction = state(Interaction) {
     }
 }
 
-
-
-val finally = state(Interaction) {
+val Layering = state(Interaction) {
     onEntry {
         furhat.say("I bet that you can start smelling the cake, I will get a sense of smell soon in the future")
+        furhat.say("Take the cake out of the oven and cut it carefully to get ${users.current.CakeChoices.cake.layers} layers.")
+        furhat.say("Spread the frosting evenly between each layer and put it back together. Finally cover the cake in frosting.")
+        goto(Done)
+    }
+
+}
+
+
+val Done = state(Interaction) {
+    onEntry {
+        furhat.say("Enjoy the cake!")
         goto(Idle)
     }
 
