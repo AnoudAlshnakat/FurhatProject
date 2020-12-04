@@ -32,11 +32,11 @@ val Interaction: State = state {
     onResponse {
         nomatches++
         when (nomatches)  {
-            1 -> {furhat.ask("I didn't hear you well, sorry. Can you say it again!") 
-                 delay(500)
-                 furhat.gesture(Gestures.BigSmile)}
-            2 -> {furhat.ask("I still didn't hear that, apologies. Could you rephrase?") 
-                 furhat.gesture(Gestures.BigSmile)}
+            1 -> {furhat.ask("I didn't hear you well, sorry. Can you say it again!")
+                delay(500)
+                furhat.gesture(Gestures.BigSmile)}
+            2 -> {furhat.ask("I still didn't hear that, apologies. Could you rephrase?")
+                furhat.gesture(Gestures.BigSmile)}
             else -> {
                 furhat.say("Still couldn't get that.")
                 reentry()

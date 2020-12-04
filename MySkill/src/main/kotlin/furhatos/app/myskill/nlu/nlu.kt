@@ -78,6 +78,23 @@ class Heard : EnumEntity() {
     }
 }
 
+class FlavourOptions: Intent() {
+    override fun getExamples(lang: Language): List<String> {
+        return listOf("What options do you have?",
+                "What flavours do you have?",
+                "What are the alternatives?",
+                "What do you have?")
+    }
+}
+
+class FrostingQuestion: Intent() {
+    override fun getExamples(lang: Language): List<String> {
+        return listOf("What is frosting?",
+                "Could you explain what frosting is?",
+                "Frosting?")
+    }
+}
+
 class Layers(val count : furhatos.nlu.common.Number? = Number(1) )
 
 /*class Layers(val count : furhatos.nlu.common.Number? = Number(1) )
