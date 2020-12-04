@@ -4,6 +4,7 @@ import furhatos.nlu.common.*
 import furhatos.flow.kotlin.*
 import furhatos.app.myskill.nlu.*
 import furhatos.gestures.Gestures
+import furhatos.nlu.common.Number
 
 
 val Cheerup = state(Interaction) {
@@ -36,6 +37,7 @@ val Start : State = state(Interaction) {
                 "Hey hey, I'm Linda",
                 "Hello, I am linda, your Baking Assistant"))
         furhat.gesture(Gestures.Wink)
+
 
                 furhat.ask( random ("Would you like to bake a cake today?",
                         "Are you ready to start baking?",
@@ -86,21 +88,26 @@ val ChooseFlavour = state(Interaction) {
 
 
 }
+
 val ChooseLayers= state(Interaction) {
     onEntry {
-        furhat.ask(random ("How many layers do you want for your cake?",
-                                 "How many layers is your cake going to be?",
-                                 "How many cake layers do you have in mind?"))
-    }
-    onResponse<SelectLayers>{
-        users.current.CakeChoices.cake.layers = it.intent.toString().toInt()
-        print(users.current.CakeChoices.cake.layers)
-        furhat.say( random("Ok you want ${it.intent} layers",
-                                "Oh, that is great, ${it.intent} layers is a nice choice ",
-                                "Okay, it seems like ${it.intent} layers for today's cake")) //R is recipe and F means Frosting
-        goto(ChooseFrosting)
+                var number = furhat.askFor<Number>(random ("How many layers do you want for your cake?",
+                        "How many layers is your cake going to be?",
+                        "How many cake layers do you have in mind?"))
+                val numbers = listOf("one", "two", "three", "four", "five", "six")
+                val number_of_layers = numbers.indexOf(number.toString())
+                if (number_of_layers == -1){
+                    users.current.CakeChoices.cake.layers = number.toString().toInt()}
+                else{
+                    users.current.CakeChoices.cake.layers = number_of_layers+1
+                }
+                furhat.say( random("Ok you want ${users.current.CakeChoices.cake.layers} layers",
+                        "Oh, that is great, ${users.current.CakeChoices.cake.layers} layers is a nice choice ",
+                        "Okay, it seems like ${users.current.CakeChoices.cake.layers} layers for today's cake"))
+                goto(ChooseFrosting)
     }
 }
+
 
 val ChooseFrosting= state(Interaction) {
     onEntry {
@@ -135,6 +142,7 @@ val ConfirmCake = state(Interaction) {
         if (ready) {
             furhat.say("You have selected a ${users.current.CakeChoices.cake.layers} layer  ${users.current.CakeChoices.cake.flavour}  cake "+
                     (if (users.current.CakeChoices.cake.frosting) " with frosting. " else ""))
+
             furhat.say("Let me know when you are ready for the cake ingredients.")
             furhat.listen(timeout = 5000)
         }
@@ -256,10 +264,10 @@ val GiveInstructions = state(Interaction) {
 
             goto(ReadyForFrosting) //change enjoy the cake, and go to idle, to an other step to check it ith frosting
         } else {
-
                     furhat.ask(random("Let me know when you are ready for the next step.",
                                 "Are you ready for the following step?",
                                 "Tell me when you are done with that."), timeout = 100000)
+
         }
     }
     onResponse<Ready> { reentry() }
