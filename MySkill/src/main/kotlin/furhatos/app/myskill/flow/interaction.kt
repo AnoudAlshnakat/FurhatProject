@@ -38,20 +38,12 @@ val Start : State = state(Interaction) {
                 "Hello, I am linda, your Baking Assistant"))
         furhat.gesture(Gestures.Wink)
 
-<<<<<<< HEAD
+
         furhat.ask( random ("Would you like to bake a cake today?",
                 "Are you ready to start baking?",
                 "How about baking a cake today",
                 "May I assist you with an excellent recipe for a cake"),
                 timeout = 10000)
-=======
-
-                furhat.ask( random ("Would you like to bake a cake today?",
-                        "Are you ready to start baking?",
-                        "How about baking a cake today",
-                        "May I assist you with an excellent recipe for a cake"),
-                        timeout = 10000)
->>>>>>> remotes/origin/master
     }
     onResponse<Yes> {
         furhat.gesture(Gestures.Smile)
@@ -103,7 +95,6 @@ val ChooseFlavour = state(Interaction) {
 
 val ChooseLayers= state(Interaction) {
     onEntry {
-<<<<<<< HEAD
         furhat.ask(random ("How many layers do you want for your cake?",
                 "How many layers is your cake going to be?",
                 "How many cake layers do you have in mind?"))
@@ -115,22 +106,20 @@ val ChooseLayers= state(Interaction) {
                 "Oh, that is great, ${it.intent} layers is a nice choice ",
                 "Okay, it seems like ${it.intent} layers for today's cake")) //R is recipe and F means Frosting
         goto(ChooseFrosting)
-=======
-                var number = furhat.askFor<Number>(random ("How many layers do you want for your cake?",
-                        "How many layers is your cake going to be?",
-                        "How many cake layers do you have in mind?"))
-                val numbers = listOf("one", "two", "three", "four", "five", "six")
-                val number_of_layers = numbers.indexOf(number.toString())
-                if (number_of_layers == -1){
-                    users.current.CakeChoices.cake.layers = number.toString().toInt()}
-                else{
-                    users.current.CakeChoices.cake.layers = number_of_layers+1
-                }
-                furhat.say( random("Ok you want ${users.current.CakeChoices.cake.layers} layers",
-                        "Oh, that is great, ${users.current.CakeChoices.cake.layers} layers is a nice choice ",
-                        "Okay, it seems like ${users.current.CakeChoices.cake.layers} layers for today's cake"))
-                goto(ChooseFrosting)
->>>>>>> remotes/origin/master
+        var number = furhat.askFor<Number>(random ("How many layers do you want for your cake?",
+                "How many layers is your cake going to be?",
+                "How many cake layers do you have in mind?"))
+        val numbers = listOf("one", "two", "three", "four", "five", "six")
+        val number_of_layers = numbers.indexOf(number.toString())
+        if (number_of_layers == -1){
+            users.current.CakeChoices.cake.layers = number.toString().toInt()}
+        else{
+            users.current.CakeChoices.cake.layers = number_of_layers+1
+        }
+        furhat.say( random("Ok you want ${users.current.CakeChoices.cake.layers} layers",
+                "Oh, that is great, ${users.current.CakeChoices.cake.layers} layers is a nice choice ",
+                "Okay, it seems like ${users.current.CakeChoices.cake.layers} layers for today's cake"))
+        goto(ChooseFrosting)
     }
 }
 
@@ -289,17 +278,9 @@ val GiveInstructions = state(Interaction) {
         if (instruction.size - 1 < instruction_step) {
             furhat.ask("Tell me when you are done with this last step", timeout = 100000)
         } else {
-<<<<<<< HEAD
-
             furhat.ask(random("Let me know when you are ready for the next step.",
                     "Are you ready for the following step?",
                     "Tell me when you are done with that."), timeout = 100000)
-=======
-                    furhat.ask(random("Let me know when you are ready for the next step.",
-                                "Are you ready for the following step?",
-                                "Tell me when you are done with that."), timeout = 100000)
-
->>>>>>> remotes/origin/master
         }
     }
     onResponse<Ready> { reentry() }
@@ -422,14 +403,14 @@ val FrostingInstruction = state(Interaction) {
     }
     onResponse<Ready> { reentry() }
     onResponse<Done>{
-       if (counter < 3){
-           reentry()
-       }else {
-           furhat.say(random("Now the frosting is done, put it on the side, and wait for your cake to be ready.",
-                   "Great, and that is how you make a frosting. Let's wait for the cake be be ready now.",
-                   "Excellent, I knew you can do it! The frosting is done."))
-           goto(Layering)
-       }
+        if (counter < 3){
+            reentry()
+        }else {
+            furhat.say(random("Now the frosting is done, put it on the side, and wait for your cake to be ready.",
+                    "Great, and that is how you make a frosting. Let's wait for the cake be be ready now.",
+                    "Excellent, I knew you can do it! The frosting is done."))
+            goto(Layering)
+        }
     }
     onResponse<Repeat> { furhat.say(Finstruction.get(counter-1))
         delay(3000)
