@@ -73,7 +73,7 @@ val ChooseFlavour = state(Interaction) {
     onResponse<SelectFlavour> {
         furhat.say( random ("Great, I love ${it.intent.flavour}!",
                 "Wonderful choice, it is hard to resist a good cake with ${it.intent.flavour} flavour ",
-                "I believe that we will make it taste even better than you imagined",
+                "I believe that we will make it taste even better than you imagine",
                 "Excellent choice, ${it.intent.flavour} is the flavour of this rainy season"))
 
         users.current.CakeChoices.cake.flavour = "${it.intent.flavour}"
@@ -133,9 +133,8 @@ val ConfirmCake = state(Interaction) {
     var ready = true; //assume always ready to hear the ingredients
     onEntry{
         if (ready) {
-            furhat.say("You have selected a ${users.current.CakeChoices.cake.flavour}  cake ")
-            furhat.say("with ${users.current.CakeChoices.cake.layers} layers")
-            furhat.say((if (users.current.CakeChoices.cake.frosting) "and frosting" else ""))
+            furhat.say("You have selected a ${users.current.CakeChoices.cake.layers} layer  ${users.current.CakeChoices.cake.flavour}  cake "+
+                    (if (users.current.CakeChoices.cake.frosting) " with frosting. " else ""))
             furhat.say("Let me know when you are ready for the cake ingredients.")
             furhat.listen(timeout = 5000)
         }
@@ -169,12 +168,24 @@ val ConfirmCake = state(Interaction) {
 
 
 val Ingredients = state(Interaction) {
+
         onEntry{
+
             if (users.current.CakeChoices.cake.flavour=="chocolate"){
-                furhat.say ( "flour, sugar, cacao, baking powder, salt, vegetable oil")
+                furhat.say ( "${170    * users.current.CakeChoices.cake.layers} grams flour," +
+                              " ${200  * users.current.CakeChoices.cake.layers} grams sugar,"+
+                              " ${4  * users.current.CakeChoices.cake.layers} table spoons of cacao,"+
+                              "${2  * users.current.CakeChoices.cake.layers} table spoons of baking powder,"+
+                              "${2  * users.current.CakeChoices.cake.layers} pinches of salt and"+
+                              "${280  * users.current.CakeChoices.cake.layers} grams of vegetable oil.")
             }
             else {
-                furhat.say("flour, sugar, vanilla extract, baking powder, salt, vegetable oil")
+                furhat.say("${170    * users.current.CakeChoices.cake.layers} grams flour, " +
+                        " ${200  * users.current.CakeChoices.cake.layers} grams sugar, "+
+                        " ${1  * users.current.CakeChoices.cake.layers} table spoons of vanilla extract, "+
+                        "${2  * users.current.CakeChoices.cake.layers} table spoons of baking powder, "+
+                        "${2  * users.current.CakeChoices.cake.layers} pinches of salt and "+
+                        "${280  * users.current.CakeChoices.cake.layers} grams of vegetable oil.")
             }
             delay(2000)
             furhat.ask(random ("Do you want to hear the ingredients again or do you want to start with the instructions?",
@@ -295,7 +306,15 @@ val ReadyForFrosting = state(Interaction) {
 
 val FrostingIngredients = state(Interaction){
     onEntry{
-        furhat.say ( "Bring butter, powdered  sugar, vanilla, milk.")
+        furhat.say("Bring" +
+                " ${75  * users.current.CakeChoices.cake.layers} grams butter, "+
+                " ${360  * users.current.CakeChoices.cake.layers} grams powdered sugar, "+
+                "${1  * users.current.CakeChoices.cake.layers} table spoon of vanilla extract and "+
+                "${2  * users.current.CakeChoices.cake.layers} table spoons of milk. ")
+        //recipe source : https://www.bettycrocker.com/recipes/vanilla-buttercream-frosting/39107a19-be94-4571-9031-f1fc5bd1d606
+
+
+
         delay(2000)
         furhat.ask ( random ("Would you like to hear the ingredients again?",
                                     "I can repeat the ingredients if you like",
