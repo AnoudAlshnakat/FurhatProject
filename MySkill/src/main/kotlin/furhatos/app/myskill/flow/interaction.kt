@@ -77,6 +77,7 @@ val ChooseFlavour = state(Interaction) {
         furhat.ask("Which one do you want?")
     }
     onResponse<SelectFlavour> {
+        furhat.gesture(Gestures.BigSmile)
         furhat.say( random ("Great, I love ${it.intent.flavour}!",
                 "Wonderful choice, it is hard to resist a good cake with ${it.intent.flavour} flavour ",
                 "I believe that we will make it taste even better than you imagine",
@@ -102,6 +103,7 @@ val ChooseLayers= state(Interaction) {
     onResponse<SelectLayers>{
         users.current.CakeChoices.cake.layers = it.intent.toString().toInt()
         print(users.current.CakeChoices.cake.layers)
+        furhat.gesture(Gestures.Oh)
         furhat.say( random("Ok you want ${it.intent} layers",
                 "Oh, that is great, ${it.intent} layers is a nice choice ",
                 "Okay, it seems like ${it.intent} layers for today's cake")) //R is recipe and F means Frosting
@@ -133,6 +135,7 @@ val ChooseFrosting= state(Interaction) {
     }
     onResponse<Yes>{
         users.current.CakeChoices.cake.frosting = true
+        furhat.gesture(Gestures.BigSmile)
         furhat.say(random ("Ok great.",
                 "Nice, you have a fine taste",
                 "Frosting makes everything taste better!",
@@ -143,6 +146,7 @@ val ChooseFrosting= state(Interaction) {
 
     onResponse<No>{
         users.current.CakeChoices.cake.frosting = false
+        furhat.gesture(Gestures.BrowRaise)
         furhat.say( random ("Alright plain ${users.current.CakeChoices.cake.flavour} cake it is!",
                 "As you wish, I still can make this recipe work, even without frosting",
                 "Too bad, it would have tasted good with frosting"))
@@ -160,6 +164,7 @@ val ChooseFrosting= state(Interaction) {
 val ConfirmCake = state(Interaction) {
     var ready = true; //assume always ready to hear the ingredients
     onEntry{
+        furhat.gesture(Gestures.BigSmile)
         if (ready) {
             furhat.say("You have selected a ${users.current.CakeChoices.cake.layers} layer  ${users.current.CakeChoices.cake.flavour}  cake "+
                     (if (users.current.CakeChoices.cake.frosting) " with frosting. " else ""))
