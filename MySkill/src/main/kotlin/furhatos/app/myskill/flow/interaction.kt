@@ -14,14 +14,17 @@ val Cheerup = state(Interaction) {
             random {
                 +"Don't give up, it is just a cake."
                 +"I bet Gordon Ramsy will not like this cake, looks a bit whimsy, work harder"
-                +""
+                +"Cheer up, Mandy - the insurance will cover most of the damage."
                 +"Baking is not for quitters"
                 +"Good Job, I see the light at the end of the tunnel. Finally!"
-                +""
+                +"Cheer up! The worst is over."
                 +"OMG, This is going so slow, can you be a little bit faster"
                 +"Move It, Grandpa"
                 +"Move It, Grandma"
                 +"You do seriously surprise me"
+                +"Cheer up! The worst is over."
+                +"At least you're still in one piece "
+                +"It’s not so bad."
             }
         }
         furhat.gesture(Gestures.Nod)
