@@ -25,13 +25,14 @@ val Cheerup = state(Interaction) {
             }
         }
         furhat.gesture(Gestures.Nod)
+        terminate()
     }
 }
 
 
 val Joke = state(Interaction) {
     onEntry {
-        furhat.ask(random("Do you want to hear a joke while you bake?", "Perhaps you want to hear a joke while baking?"))
+        furhat.ask(random("Do you want to hear a joke while you bake?", "Perhaps you want to hear a joke while baking?"), timeout = 10000)
         furhat.gesture(Gestures.Nod)
     }
     onResponse<Yes> {
@@ -39,6 +40,10 @@ val Joke = state(Interaction) {
         furhat.say (random("I don't do jokes, I am a baking assistant not a comedian","A man walked into a bar. It hurt."))
         delay(1000)
         furhat.say("Enough playing. I will be quite, so you can concentrate.")
+        terminate()
+    }
+    onResponse <No>{
+        furhat.say("Ok, I will let you bake in silence.")
         terminate()
     }
     onResponse <No>{
@@ -87,6 +92,7 @@ val waitForReady = state(Interaction) {
 }
 
 
+///////////////////////////////////////////////////////////////////////////////////////////
 val Start : State = state(Interaction) {
 
     onEntry {
@@ -123,11 +129,11 @@ val Start : State = state(Interaction) {
 }
 val ChooseFlavour = state(Interaction) {
     onEntry{
-        furhat.ask("What kind of flavour do you want your cake to have?")
+        furhat.ask("What kind of flavour do you want your cake to have?", timeout = 10000)
 
     }
     onReentry{
-        furhat.ask("What kind of flavour do you want, chocolate or vanilla?")
+        furhat.ask("What about chocolate or vanilla cake? which one do you want?")
     }
     onResponse<FlavourOptions> {
         furhat.say("We have chocolate and vanilla recipes")
@@ -144,7 +150,7 @@ val ChooseFlavour = state(Interaction) {
         goto(ChooseLayers)
     }
     onResponse {
-        furhat.say("I did not catch that.")
+        furhat.say("I don't have the recipe of this flavour currently, wait for the WASP students to update my data base.")
         reentry()// Manually propagate to default Dialog state
     }
 
@@ -155,7 +161,7 @@ val ChooseLayers= state(Interaction) {
     onEntry {
         furhat.ask(random ("How many layers do you want for your cake?",
                 "How many layers is your cake going to be?",
-                "How many cake layers do you have in mind?"))
+                "How many cake layers do you have in mind?"), timeout = 10000)
     }
     onResponse<SelectLayers>{
         users.current.CakeChoices.cake.layers = it.intent.toString().toInt()
@@ -213,20 +219,17 @@ val ConfirmCake = state(Interaction) {
                     (if (users.current.CakeChoices.cake.frosting) " with frosting. " else ""))
 
             furhat.say("Let me know when you are ready for the cake ingredients.")
-            furhat.listen(timeout = 5000)
+            furhat.listen(timeout = 500000)
         }
         else{
             furhat.say("take a few minutes, I am waiting here.")
-            furhat.listen(timeout = 60000)
+            furhat.listen(timeout = 600000)
         }
     }
     onReentry {furhat.say{"Let me know when you are ready."}
         furhat.listen(timeout=30000)
     }
-    onNoResponse {
-        call(Cheerup)
-        reentry()
-    }
+
     onResponse<Ready> {
         // goto(Ingredients)
         goto(Ingredients)
@@ -252,17 +255,17 @@ val Ingredients = state(Interaction) {
             furhat.say ( "${170    * users.current.CakeChoices.cake.layers} grams flour," +
                     " ${200  * users.current.CakeChoices.cake.layers} grams sugar,"+
                     " ${4  * users.current.CakeChoices.cake.layers} table spoons of cacao,"+
-                    "${2  * users.current.CakeChoices.cake.layers} table spoons of baking powder,"+
-                    "${2  * users.current.CakeChoices.cake.layers} pinches of salt and"+
-                    "${280  * users.current.CakeChoices.cake.layers} grams of vegetable oil.")
+                    " ${2  * users.current.CakeChoices.cake.layers} table spoons of baking powder,"+
+                    " ${2  * users.current.CakeChoices.cake.layers} pinches of salt and"+
+                    " ${280  * users.current.CakeChoices.cake.layers} grams of vegetable oil.")
         }
         else {
             furhat.say("${170    * users.current.CakeChoices.cake.layers} grams flour, " +
                     " ${200  * users.current.CakeChoices.cake.layers} grams sugar, "+
                     " ${1  * users.current.CakeChoices.cake.layers} table spoons of vanilla extract, "+
-                    "${2  * users.current.CakeChoices.cake.layers} table spoons of baking powder, "+
-                    "${2  * users.current.CakeChoices.cake.layers} pinches of salt and "+
-                    "${280  * users.current.CakeChoices.cake.layers} grams of vegetable oil.")
+                    " ${2  * users.current.CakeChoices.cake.layers} table spoons of baking powder, "+
+                    " ${2  * users.current.CakeChoices.cake.layers} pinches of salt and "+
+                    " ${280  * users.current.CakeChoices.cake.layers} grams of vegetable oil.")
         }
         delay(2000)
         furhat.ask(random ("Do you want to hear the ingredients again or do you want to start with the instructions?",
@@ -270,6 +273,12 @@ val Ingredients = state(Interaction) {
     }
     onResponse<Ingredients>{
         reentry()
+    }
+    onResponse<Repeat>{
+        reentry()
+    }
+    onResponse<Start>{
+        goto(GiveInstructions)
     }
     onResponse<Instructions>{
         goto(GiveInstructions)
@@ -305,13 +314,13 @@ val GiveInstructions = state(Interaction) {
                 "Let me know when you are ready for the following step.",
                 "Whenever you are done, I can move to the next step, just let me know",
                 "Once you are done with this step, please inform me",
-                "Great, whenever you are ready for the next phase of the recipe ",
+                "Great, whenever you are ready for the next phase of the recipe please tell me ",
                 "This procedure supposed to be straight forward, When you are ready for the next one, tell me",
                 "If you are done and ready for the next step, just say that you are ready",
                 "If you are done and ready for the following step, just say that you are ready",
                 "When you are ready to the following step please tell me"
-        ))
-        furhat.listen(5000)
+        )) // 10 seconds
+        furhat.listen(20000) //waits 20 second
     }
     onReentry {
         told_joke = false
@@ -373,7 +382,7 @@ val GiveInstructions = state(Interaction) {
             told_joke=true
         }
         furhat.say(random("I am still here for when you need me.", "I am still here for you."))
-        furhat.listen(10000)}
+        furhat.listen(100000000)}
 }
 
 val ReadyForFrosting = state(Interaction) {
@@ -428,6 +437,7 @@ val FrostingIngredients = state(Interaction){
     onResponse<Repeat> {
         reentry()
     }
+
     onResponse<Heard> {
         furhat.say ( "I am glad that I did not have to repeat that, phewww")
         goto(FrostingInstruction)
@@ -457,7 +467,7 @@ val FrostingInstruction = state(Interaction) {
                         "Let me know when you are ready for the following step.",
                         "Whenever you are done, I can move to the next step, just let me know",
                         "Once you are done with this step, please inform me",
-                        "Great, whenever you are ready for the next phase of the recipe ",
+                        "Great, whenever you are ready for the next phase of the recipe please inform me",
                         "This procedure supposed to be straight forward, When you are ready for the next one, tell me",
                         "If you are done and ready for the next step, just say that you are ready",
                         "If you are done and ready for the following step, just say that you are ready",
@@ -470,7 +480,16 @@ val FrostingInstruction = state(Interaction) {
             }
         }
     }
-    onResponse<Ready> { reentry() }
+    onResponse<Ready> {
+        if (counter < 3){
+            reentry()
+        }else {
+            furhat.say(random("Now the frosting is done, put it on the side, and wait for your cake to be ready.",
+                    "Great, and that is how you make a frosting. Let's wait for the cake be be ready now.",
+                    "Excellent, I knew you can do it! The frosting is done."))
+            goto(smellsen)
+        }
+    }
     onResponse<Done>{
         if (counter < 3){
             reentry()
@@ -478,7 +497,7 @@ val FrostingInstruction = state(Interaction) {
             furhat.say(random("Now the frosting is done, put it on the side, and wait for your cake to be ready.",
                     "Great, and that is how you make a frosting. Let's wait for the cake be be ready now.",
                     "Excellent, I knew you can do it! The frosting is done."))
-            goto(Layering)
+            goto(smellsen)
         }
     }
     onResponse<Repeat> { furhat.say(Finstruction.get(counter-1))
@@ -493,21 +512,49 @@ val FrostingInstruction = state(Interaction) {
     }
 }
 
-val Layering = state(Interaction) {
+
+
+val smellsen = state(Interaction) {
     onEntry {
         furhat.say("I bet that you can start smelling the cake, I will get a sense of smell soon in the future")
+        furhat.ask("Are you excited for me to get a sense of smell?")
+
+    }
+    onResponse<Yes>{
+        furhat.say("I think we will become best friends")
+        goto(layering)
+    }
+    onResponse<No>{
+        furhat.say("Whatever, my scientist father is working on it")
+        goto(layering)
+    }
+
+}
+
+val layering = state(Interaction) {
+    onEntry {
         furhat.say("Take the cake out of the oven and cut it carefully to get ${users.current.CakeChoices.cake.layers} layers.")
-        furhat.say("Spread the frosting evenly between each layer and put it back together. Finally cover the cake in frosting.")
+        furhat.ask("I think you need to wear your oven gloves. Do you have them around?")
+    }
+    onResponse<Yes>{
+        furhat.say("Well, you really seem to be smart")
+        goto(Done)
+    }
+    onResponse<No>{
+        furhat.say("Your actions and their consequences are kind of my business anymore. Just put the gloves on")
         goto(Done)
     }
 
 }
 
 
+
+
 val Done = state(Interaction) {
     onEntry {
+        furhat.say("Spread the frosting evenly between each layer and put it back together. Finally cover the cake in frosting.")
         call(Cheerup)
-        furhat.say("Enjoy the cake!")
+        furhat.say("Good job, enjoy the cake!")
         goto(Idle)
     }
 

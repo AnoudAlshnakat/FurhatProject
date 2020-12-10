@@ -66,6 +66,12 @@ class Repeat : EnumEntity() {
     }
 }
 
+class Start : EnumEntity() {
+    override fun getEnum(lang: Language): List<String> {
+        return listOf("start", "begin")
+    }
+}
+
 class Done : EnumEntity() {
     override fun getEnum(lang: Language): List<String> {
         return listOf("Done", "Finished", "completed", "finished", "achieved", "accomplished", "carried out")
