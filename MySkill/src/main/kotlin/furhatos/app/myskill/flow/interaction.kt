@@ -40,7 +40,11 @@ val Joke = state(Interaction) {
     }
     onResponse<Yes> {
         furhat.say("Great!")
-        furhat.say (random("I don't do jokes, I am a baking assistant not a comedian","A man walked into a bar. It hurt."))
+        furhat.say (random("I don't do jokes, I am a baking assistant not a comedian",
+                "A man walked into a bar. It hurt.",
+                " I threw a boomerang a few years ago, now live in constant fear",
+        "My wife accused me of being immature, I told her to get out of my fort",
+        "Where do you find a cow with no legs? right where you left it"))
         delay(1000)
         furhat.say("Enough playing. I will be quite, so you can concentrate.")
         terminate()
